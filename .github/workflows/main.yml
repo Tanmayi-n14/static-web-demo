@@ -3,6 +3,9 @@ name: Deploy Static Website
 on:
   push:
     branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  workflow_dispatch: # Allows triggering runs manually from the Actions tab UI
 
 # Grants the workflow permission to publish to GitHub Pages
 permissions:
@@ -33,6 +36,7 @@ jobs:
   # STAGE 2: Continuous Deployment (CD)
   deploy:
     needs: test  # CD will only run if the 'test' job passes!
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request' # Only deploy if on main and not a PR
     runs-on: ubuntu-latest
     environment:
       name: github-pages
